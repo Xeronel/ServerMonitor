@@ -10,11 +10,11 @@ class Network():
     def __init__(self, interface: str='eth0'):
         # Create the ul/dl thread and a deque of length 1 to hold the ul/dl- values
         self._transfer_rate = deque(maxlen=1)
-        t = threading.Thread(target=self._calc_ul_dl, args=(interface, self._transfer_rate))
+        self._t = threading.Thread(target=self._calc_ul_dl, args=(interface, self._transfer_rate))
 
         # The program will exit if there are only daemonic threads left.
-        t.daemon = True
-        t.start()
+        self._t.daemon = True
+        self._t.start()
 
     @property
     def speed(self):
