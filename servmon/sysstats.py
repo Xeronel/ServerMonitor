@@ -1,40 +1,40 @@
-__author__ = 'ripster'
-
 import threading
 from collections import deque
 import time
 import psutil
 
 
-class Network():
+class Network:
     def __init__(self, interface: str='eth0'):
+        self.interface = interface
+
         # Create the ul/dl thread and a deque of length 1 to hold the ul/dl- values
-        self._transfer_rate = deque(maxlen=1)
-        self._t = threading.Thread(target=self._calc_ul_dl, args=(interface, self._transfer_rate))
+        self.__transfer_rate = deque(maxlen=1)
+        self.__t = threading.Thread(target=self.__calc_ul_dl)
 
         # The program will exit if there are only daemonic threads left.
-        self._t.daemon = True
-        self._t.start()
+        self.__t.daemon = True
+        self.__t.start()
 
     @property
     def speed(self):
         try:
-            return self._transfer_rate[-1]
+            return self.__transfer_rate[-1]
         except IndexError:
             return 0, 0
 
-    @staticmethod
-    def _calc_ul_dl(interface, rate):
+    def __calc_ul_dl(self):
         t0 = time.time()
-        counter = psutil.net_io_counters(pernic=True)[interface]
+        counter = psutil.net_io_counters(pernic=True)[self.interface]
         total = (counter.bytes_sent, counter.bytes_recv)
         while True:
             last_tot = total
             time.sleep(1)
-            counter = psutil.net_io_counters(pernic=True)[interface]
+            counter = psutil.net_io_counters(pernic=True)[self.interface]
             t1 = time.time()
             total = (counter.bytes_sent, counter.bytes_recv)
-            ul, dl = [(now - last) / (t1 - t0) / 1000000.0
+            # Convert from bits to mebibits
+            ul, dl = [(now - last) / (t1 - t0) / 1049000.0
                       for now, last in zip(total, last_tot)]
-            rate.append((ul, dl))
+            self.__transfer_rate.append((ul, dl))
             t0 = time.time()
