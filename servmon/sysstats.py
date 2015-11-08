@@ -29,7 +29,7 @@ class Network:
         total = (counter.bytes_sent, counter.bytes_recv)
         while True:
             last_tot = total
-            time.sleep(1)
+            time.sleep(0.5)
             counter = psutil.net_io_counters(pernic=True)[self.interface]
             t1 = time.time()
             total = (counter.bytes_sent, counter.bytes_recv)
