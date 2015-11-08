@@ -5,7 +5,7 @@ import psutil
 
 
 class Network:
-    def __init__(self, interface: str='eth0'):
+    def __init__(self, interface: str='Local Area Connection'):
         self.interface = interface
 
         # Create the ul/dl thread and a deque of length 1 to hold the ul/dl- values
@@ -34,7 +34,7 @@ class Network:
             t1 = time.time()
             total = (counter.bytes_sent, counter.bytes_recv)
             # Convert from bits to mebibits
-            ul, dl = [(now - last) / (t1 - t0) / 1049000.0
+            ul, dl = [((now - last) / (t1 - t0) / 1049000.0) * 8
                       for now, last in zip(total, last_tot)]
             self.__transfer_rate.append((ul, dl))
             t0 = time.time()

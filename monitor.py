@@ -2,11 +2,20 @@ __author__ = 'ripster'
 
 from servmon.sysstats import Network
 import time
-import os
+import curses
 
 
 net = Network()
-os.system('clear')
-os.system('setterm -cursor off')
-while True:
-    print('UL: {0:.2f} MB/s - DL: {1:.2f} MB/s'.format(*net.speed), end='\r')
+screen = curses.initscr()
+curses.halfdelay(5)
+curses.noecho()
+quit = False
+while not quit:
+    screen.clear()
+    screen.addstr(12, 25, 'UL: {0:.2f} Mbps - DL: {1:.2f} Mbps'.format(*net.speed))
+    screen.refresh()
+
+    if screen.getch() == 3:
+        curses.endwin()
+        quit = True
+
