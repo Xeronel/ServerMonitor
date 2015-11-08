@@ -5,7 +5,7 @@ import psutil
 
 
 class Network:
-    def __init__(self, interface: str='Local Area Connection'):
+    def __init__(self, interface: str='eth0'):
         self.interface = interface
 
         # Create the ul/dl thread and a deque of length 1 to hold the ul/dl- values
